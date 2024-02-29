@@ -75,7 +75,9 @@ onMounted(async () => {
   await fetchFavorites()
 })
 
-watch(fetchItems)
+watch(filters, fetchItems)
+
+
 </script>
 
 <template>
