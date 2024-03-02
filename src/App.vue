@@ -48,12 +48,12 @@ const addToFavorite = async (item) => {
         parentId: item.id
       }
       item.isFavorite = true
+
       const { data } = await axios.post(`https://db5d36f094eacee5.mokky.dev/favorites`, obj)
 
       item.favoriteId = data.id
     } else {
       item.isFavorite = false
-
       await axios.delete(`https://db5d36f094eacee5.mokky.dev/favorites/${item.favoriteId}`)
       item.favoriteId = null
     }
