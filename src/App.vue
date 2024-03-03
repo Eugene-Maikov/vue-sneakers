@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { onMounted, provide, reactive, ref, watch } from 'vue'
+import { computed, onMounted, provide, reactive, ref, watch } from 'vue'
 
 import CardList from './components/CardList.vue'
 import Drawer from './components/Drawer.vue'
@@ -10,6 +10,9 @@ const items = ref([])
 const cart = ref([])
 
 const drawerOpen = ref(false)
+
+const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
+const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
 
 const closeDrawer = () => {
   drawerOpen.value = false
@@ -34,8 +37,7 @@ const removeFromCart = (item) => {
 }
 
 const onClickAddPlus = (item) => {
-  (!item.isAdded) ? addToCart(item) : removeFromCart(item)
-  console.log(cart)
+  !item.isAdded ? addToCart(item) : removeFromCart(item)
 }
 
 const onChangeSelect = (event) => {
@@ -131,9 +133,10 @@ provide('cart', {
 </script>
 
 <template>
-  <Drawer v-if="drawerOpen" />
+  <Drawer v-if="drawerOpen" :total-price="totalPrice" :vat-price="vatPrice" />
+
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
-    <Header @open-drawer="openDrawer" />
+    <Header :total-price="totalPrice" @open-drawer="openDrawer" />
 
     <div class="p-10">
       <div class="flex justify-between items-center">
