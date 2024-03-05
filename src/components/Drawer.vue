@@ -24,9 +24,9 @@ defineProps({
         image-url="/package-icon.png"
       />
     </div>
-    <div v-else>
+    <div v-else class="flex flex-col justify-between h-full">
       <CartItemList />
-      
+
       <div class="flex flex-col gap-4 mt-7">
         <div class="flex gap-2">
           <span>Итого: </span>
