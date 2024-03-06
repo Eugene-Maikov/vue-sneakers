@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios'
 import { computed, provide, ref, watch } from 'vue'
 
 import Drawer from './components/Drawer.vue'

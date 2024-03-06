@@ -28,7 +28,7 @@ const addToFavorite = async (item) => {
   try {
     if (!item.isFavorite) {
       const obj = {
-        parentId: item.id
+        item_id: item.id
       }
       item.isFavorite = true
 
