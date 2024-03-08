@@ -1,15 +1,39 @@
 <script setup>
+import axios from 'axios'
+import { computed, inject, ref } from 'vue'
+
 import CartItemList from './CartItemList.vue'
 import DrawerHead from './DrawerHead.vue'
 import InfoBlock from './InfoBlock.vue'
 
-const emit = defineEmits(['createOrder'])
-
-defineProps({
+const props = defineProps({
   totalPrice: Number,
-  vatPrice: Number,
-  buttonDisabled: Boolean
+  vatPrice: Number
 })
+
+const { cart, closeDrawer } = inject('cart')
+
+const isCreating = ref(false)
+
+const createOrder = async () => {
+  try {
+    isCreating.value = true
+    const { data } = await axios.post(`https://db5d36f094eacee5.mokky.dev/orders`, {
+      item: cart.value,
+      totalPrice: props.totalPrice.value
+    })
+
+    cart.value = []
+    return data
+  } catch (err) {
+    console.log(err)
+  } finally {
+    isCreating.value = false
+  }
+}
+
+const cartIsEmpty = computed(() => cart.value.length === 0)
+const buttonDisabled = computed(() => isCreating.value || cartIsEmpty.value)
 </script>
 
 <template>
@@ -40,7 +64,7 @@ defineProps({
         </div>
         <button
           :disabled="buttonDisabled"
-          @click="() => emit('createOrder')"
+          @click="createOrder"
           class="mt-4 transition bg-lime-500 w-full rounded py-3 text-white hover:bg-lime-600 active:bg-lime-700 cursor-pointer disabled:bg-slate-300 disabled:cursor-default"
         >
           Оформить заказ
