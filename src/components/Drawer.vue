@@ -14,17 +14,19 @@ const props = defineProps({
 const { cart, closeDrawer } = inject('cart')
 
 const isCreating = ref(false)
+const orderId = ref(null)
 
 const createOrder = async () => {
   try {
     isCreating.value = true
+
     const { data } = await axios.post(`https://db5d36f094eacee5.mokky.dev/orders`, {
       item: cart.value,
       totalPrice: props.totalPrice.value
     })
 
     cart.value = []
-    return data
+    orderId.value = data.id
   } catch (err) {
     console.log(err)
   } finally {
@@ -41,13 +43,21 @@ const buttonDisabled = computed(() => isCreating.value || cartIsEmpty.value)
   <div class="bg-white flex flex-col w-96 h-full fixed right-0 top-0 z-20 p-8">
     <DrawerHead />
 
-    <div v-if="!totalPrice" class="flex h-full items-center">
+    <div v-if="!totalPrice || orderId" class="flex h-full items-center">
       <InfoBlock
+        v-if="!totalPrice && !orderId"
         title="Корзина пустая"
         description="Добавьте хотябы одну пару кросcовок, чтобы сделать заказ "
         image-url="/package-icon.png"
       />
+      <InfoBlock
+        v-if="orderId"
+        title="Заказ оформлен!"
+        :description="`Ваш заказ #${orderId} скоро будет передан курьерской доставке`"
+        image-url="/order-success-icon.png"
+      />
     </div>
+
     <div v-else class="flex flex-col justify-between h-full">
       <CartItemList />
 
